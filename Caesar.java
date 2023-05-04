@@ -1,57 +1,119 @@
 /**
- * The Caesar class provides functions for encrypting strings using the Caesar cipher.
- * The Caesar cipher is a simple substitution cipher that replaces each letter in the plaintext with a letter for a fixed number of positions in the alphabet.
+
+ * This class represents the Caesar cipher algorithm, which is a type of monoalphabetic substitution
+
+ * cipher. It shifts each letter in the plaintext by a fixed number of positions down the alphabet.
+
+ * The number of positions shifted is determined by a key, which is an integer value. If the key is
+
+ * positive, the letters are shifted to the right (i.e., the cipher is encrypting), and if the key is
+
+ * negative, the letters are shifted to the left (i.e., the cipher is decrypting).
+
+ * This class extends the MonoAlphaSubstitution class, which provides the basic functionality for
+
+ * monoalphabetic substitution ciphers.
  */
-public class Caesar {
- /**
- * The main function of the Caesar class is it takes in two command-line arguments: a shift value and a string to be encrypted, and prints out the encrypted string.
- * @param args an array of command-line arguments, where we use args to get the user input. Args[0] is the shift value and args[1] is the string to be encrypted.
+
+import java.util.*;
+import java.lang.*;
+
+public class Caesar extends MonoAlphaSubstitution {
+/** The number of positions each letter is shifted by. */
+    private int shift;
+    private String key;
+/**
+ * Creates a new Caesar cipher with a shift of 0.
  */
+
+    public Caesar() {
+        this(0);
+    }
+
+/**
+ * Creates a new Caesar cipher with the specified shift.
+ * @param shift the number of positions each letter should be shifted by
+ */
+
+    public Caesar(int shift) {
+        this.shift = shift % 26;
+        this.key = generateKey();
+    }
+
+/**
+ * Generates the substitution key for this Caesar cipher.
+ * @return the substitution key
+ */
+
+    @Override
+    public char encrypt(char c){
+        if(Character.isUpperCase(c)){
+            return(key.charAt(c-'A'));
+        }else if(Character.isLowerCase(c)){
+            return(key.charAt(c-'a'+26));
+        }
+        return(c);
+    }
+
+private String generateKey() {
+    StringBuilder keyBuilder = new StringBuilder();
+    while(shift<0){
+        shift += 26;
+    }
+    for (int i = 0; i < 26; i++) {
+        int shifted = Math.abs((i + shift) % 26);
+        char shiftedChar = (char) ('A' + shifted);
+        keyBuilder.append(shiftedChar);
+    }
+    for (int i = 0; i < 26; i++) {
+        int shifted = Math.abs((i + shift) % 26);
+        char shiftedChar = (char) ('a' + shifted);
+        keyBuilder.append(shiftedChar);
+    }
+    return keyBuilder.toString();
+}
+
+@Override
+public char decrypt(char c){
+    int s = -shift;
+    if (s < 0) {
+        s += 26;
+    }
+    if(Character.isUpperCase(c)){
+        return(key.charAt((c-'A'+s) % 26));
+    }else if(Character.isLowerCase(c)){
+        return(key.charAt((c-'a'+26+s) % 26 + 26));
+    }
+    return(c);
+}
+
+/**
+ * The main method for the Caesar class. Takes in command-line arguments and performs encryption or decryption as specified.
+ * @param args an array of command-line arguments: <code>{"encrypt/decrypt", shift, "text"}</code>
+ */
+
     public static void main(String[] args) {
-        if(args.length == 2){
-            int test = Integer.parseInt(args[0]);
-            String tests = args[1];
-            System.out.println(rotate(test, tests));
-        }else if(args.length > 2){
-            System.out.println("Too many parameters!");
-            System.out.println("Usage: java Caesar n \"cipher text\"");
-        }else{
+        if (args.length < 3) {
             System.out.println("Too few parameters!");
-            System.out.println("Usage: java Caesar n \"cipher text\"");
+            System.out.println("Usage: java Caesar encrypt n \"cipher text\"");
+            return;
+        } else if(args.length > 3){
+            System.out.println("Too many parameters!");
+            System.out.println("Usage: java Caesar encrypt n \"cipher text\"");
+            return;
+        }
+        String text = args[2];
+        int x = Integer.parseInt(args[1]);
+        if(args[0].equals("encrypt")) {
+                Caesar caesar = new Caesar(x);
+                System.out.println(caesar.encrypt(text));
+                }
+        else if (args[0].equals("decrypt")){
+                Caesar caesar = new Caesar(-x);
+                System.out.println(caesar.encrypt(text));
+                }
+        else{
+                System.out.println("Invalid command.");
         }
     }
-/**
- * The rotate function takes in a character and a shift value, and returns the character encrypted using the Caesar cipher with the given shift value.
- * @param shift the amount by which to shift the character in the alphabet
- * @param x the character to be encrypted
- * @return the encrypted character
- */
-        public static char rotate(int shift, char x){
-            shift = (shift % 26) + 26;
-            //System.out.println(shift);
-            if(Character.isUpperCase(x)){
-                int sh = (((int) x + shift - 65) % 26 + 65);
-                return (char)sh;
-            } else if(Character.isLowerCase(x)){
-                int sh = (((int) x + shift - 97)% 26 + 97);
-                return (char)sh;
-            } else {
-                return x;
-            }
-
-        }
-        /**
-        * The rotate function takes in a shift value and a string, and returns the string encrypted using the Caesar cipher, it uses the previous rotate funcation to change each letter in the string, with the given shift value.
-        * @param shift the amount by which to shift the characters in the string
-        * @param line the string to be encrypted
-        * @return the encrypted string
-        */
-        public static String rotate(int shift, String line){
-            String letter = "";
-            for(int i=0; i<line.length(); i++){
-                letter += rotate(shift, line.charAt(i));
-            }
-            return letter;
-        }
-
 }
