@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css2?family=Muli&display=swap");
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Muli", sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  overflow: hidden;
+  margin: 0;
+}
+.container {
+  /* Makes them flexbox style in a row as per our needs */
+  display: flex;
+  /* Setting the width of the container to 90 percent of the view port */
+  width: 90vw;
+}
+
+.panel {
+  /* set it to cover to preserve properties on larger screens
+  otherwise auto 100% */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
+  /* now to make them rounded */
+  border-radius: 50px;
+  color: white;
+  /* This is text color */
+  cursor: pointer;
+  /* This activates when we hover over the panel */
+  flex: 0.5;
+  /* Gives them all an equal initial size within the flexbox */
+  margin: 10px;
+  /* bit of space between them */
+  position: relative;
+  transition: flex 0.7s ease-in;
+}
+.panel h3 {
+  font-size: 24px;
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  margin: 0;
+  opacity: 0;
+}
+
+.panel.active {
+  flex: 5;
+}
+
+.panel.active h3 {
+  opacity: 1;
+  transition: opacity 0.3s ease-in 0.4s;
+}
+/* What happens on very small screens and small windows */
+@media (max-width: 500px) {
+  .container {
+    width: 100vw;
+  }
+  /* Below is a query selector to select that div */
+  .panel:nth-of-type(4),
+  .panel:nth-of-type(5) {
+    display: none;
+  }
+}
+
